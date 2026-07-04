@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio OS — Add New Project</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F5F1;
+  --ink:#101010;
+  --line:#D8D8D2;
+  --mute:#6E6E68;
+  --panel:#EFEFEA;
+}
+*{-webkit-font-smoothing:antialiased;}
+html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);}
+body{font-family:'Inter',sans-serif;}
+.font-display{font-family:'Space Grotesk',sans-serif;}
+.font-mono{font-family:'IBM Plex Mono',monospace;}
+::selection{background:#101010;color:#F5F5F1;}
+.grid-paper{
+  background-image:linear-gradient(rgba(16,16,16,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(16,16,16,.05) 1px,transparent 1px);
+  background-size:36px 36px;
+}
+.card{background:var(--paper);border:1px solid var(--line);position:relative;}
+.card::before,.card::after{content:"";position:absolute;width:9px;height:9px;top:-1px;}
+.card::before{left:-1px;border-top:1.5px solid #101010;border-left:1.5px solid #101010;}
+.card::after{right:-1px;border-top:1.5px solid #101010;border-right:1.5px solid #101010;}
+.scrollbar-none::-webkit-scrollbar{display:none;}
+.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none;}
+.sidebar-link{border-left:2px solid transparent;}
+.sidebar-link.active{border-left:2px solid #F5F5F1;background:rgba(245,245,241,.06);}
+.sidebar-link:hover{background:rgba(245,245,241,.05);}
+input::placeholder, textarea::placeholder{color:#9a9a93;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23101010' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+@media (max-width:1024px){
+  #sidebar{position:fixed;left:-280px;top:0;height:100%;z-index:60;transition:left .35s ease;}
+  #sidebar.open{left:0;}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55;}
+  #overlay.show{display:block;}
+}
+</style>
+</head>
+<body class="flex h-screen w-screen overflow-hidden">
+
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<aside id="sidebar" class="w-64 shrink-0 h-full bg-[#101010] text-[#F5F5F1] flex flex-col justify-between">
+  <div>
+    <div class="px-6 py-6 border-b border-white/10">
+      <div class="font-display font-700 text-xl tracking-tight">STUDIO OS</div>
+      <div class="font-mono text-[10px] tracking-[0.25em] opacity-50 mt-1">INTERNAL PMS · V1.0</div>
+    </div>
+    <nav class="mt-4 flex flex-col font-mono text-[13px] h-[calc(100vh-200px)] overflow-y-auto scrollbar-none">
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="index.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-link active flex items-center gap-3 px-6 py-3" href="projects.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18"/></svg>
+        Projects
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="architectural.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+        Architectural
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="electrical.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Electrical
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="mechanical.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Mechanical
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="all-tasks.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        All Tasks
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="design-team.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Design Team
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="finance.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Finance
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="audit-log.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Audit Log
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="supervision-engineers.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Supervision Engineers
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="staff.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Staff
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="clients.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.7-3.2 3.2-5 6.5-5s5.8 1.8 6.5 5"/><circle cx="18" cy="8" r="2.4"/><path d="M16.3 12.2c2.3.4 3.9 1.9 4.4 4.1"/></svg>
+        Clients
+      </a>
+    </nav>
+  </div>
+  <div class="px-6 py-5 border-t border-white/10 font-mono text-[11px] flex items-center gap-3">
+    <div class="w-8 h-8 border border-white/30 flex items-center justify-center">FZ</div>
+    <div>
+      <div>Fehmi Zayed</div>
+      <div class="opacity-50 text-[10px]">Design Manager</div>
+    </div>
+  </div>
+</aside>
+
+<main class="flex-1 h-full overflow-y-auto grid-paper scrollbar-none">
+
+  <header class="sticky top-0 z-40 bg-[var(--paper)]/90 backdrop-blur border-b border-[var(--line)] px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <button onclick="toggleSidebar()" class="lg:hidden border border-[var(--line)] w-9 h-9 flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h1 class="font-display font-700 text-2xl leading-none">Add New Project</h1>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-1" id="clock"></div>
+      </div>
+    </div>
+    <div class="hidden md:flex items-center gap-2 flex-1 max-w-sm border border-[var(--line)] px-3 py-2">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="opacity-50"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input class="font-mono text-xs bg-transparent outline-none w-full" placeholder="Search project no, client, engineer…">
+    </div>
+  </header>
+
+  <div class="px-6 lg:px-10 py-8  mx-auto">
+    
+    <div class="card p-6 lg:p-10">
+      <div class="font-mono text-[10px] tracking-widest text-[var(--mute)] mb-8 border-b border-[var(--line)] pb-4">PROJECT INITIALIZATION</div>
+      
+      <form action="projects.html" method="GET" class="space-y-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Application No. *</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="e.g. N/2026/0001" required>
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Project No.</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="e.g. PRJ-2055">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">PIN No.</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="e.g. 74060078">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="md:col-span-2">
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Description</label>
+            <textarea class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors resize-y min-h-[80px]" placeholder="Brief project description or title..."></textarea>
+          </div>
+          
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Location</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="e.g. Lusail, Al Khor">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Building Type</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="e.g. Residential, Commercial">
+          </div>
+          
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Owner</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="Client Name">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Contractor</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="Main Contractor">
+          </div>
+          
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Supervision Consultant</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="Consultant Name">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Floors</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="e.g. G+M+1">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">FAR</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Plot Area (m²)</label>
+            <input type="number" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">BUA (m²)</label>
+            <input type="number" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Apartments</label>
+            <input type="number" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Shops</label>
+            <input type="number" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Parking</label>
+            <input type="number" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+        </div>
+
+        <div class="tick-row w-full mt-4"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Permit Status</label>
+            <select class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors appearance-none rounded-none cursor-pointer">
+              <option value="Not Issued">Not Issued</option>
+              <option value="Pending">Pending</option>
+              <option value="Permit Issued">Permit Issued</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Permit No.</label>
+            <input type="text" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors" placeholder="If applicable">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Permit Date</label>
+            <input type="date" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] tracking-widest text-[var(--mute)] mb-2 uppercase">Permit Deadline</label>
+            <input type="date" class="w-full font-mono text-xs border border-[var(--line)] bg-[var(--paper)] p-3 focus:border-[var(--ink)] outline-none transition-colors">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-[var(--line)]">
+          <a href="projects.html" class="font-mono text-xs border border-[var(--line)] text-[var(--mute)] px-6 py-3 hover:border-[var(--ink)] hover:text-[var(--ink)] transition-colors">CANCEL</a>
+          <button type="submit" class="font-mono text-xs border border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] px-8 py-3 hover:bg-[#222] transition-colors">SAVE PROJECT</button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <footer class="font-mono text-[10px] text-[var(--mute)] tracking-widest py-6">STUDIO OS · INTERNAL PROJECT MANAGEMENT SYSTEM · SCALE: NTS</footer>
+
+  </div>
+</main>
+
+<script>
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+function tick(){
+  const d = new Date();
+  document.getElementById('clock').textContent = d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-GB');
+}
+tick();
+setInterval(tick,1000);
+</script>
+
+</body>
+</html>

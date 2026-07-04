@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio OS — PRJ-2053</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F5F1;
+  --ink:#101010;
+  --line:#D8D8D2;
+  --mute:#6E6E68;
+  --panel:#EFEFEA;
+}
+*{-webkit-font-smoothing:antialiased;}
+html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);}
+body{font-family:'Inter',sans-serif;}
+.font-display{font-family:'Space Grotesk',sans-serif;}
+.font-mono{font-family:'IBM Plex Mono',monospace;}
+::selection{background:#101010;color:#F5F5F1;}
+.grid-paper{
+  background-image:linear-gradient(rgba(16,16,16,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(16,16,16,.05) 1px,transparent 1px);
+  background-size:36px 36px;
+}
+.card{background:var(--paper);border:1px solid var(--line);position:relative;}
+.card::before,.card::after{content:"";position:absolute;width:9px;height:9px;top:-1px;}
+.card::before{left:-1px;border-top:1.5px solid #101010;border-left:1.5px solid #101010;}
+.card::after{right:-1px;border-top:1.5px solid #101010;border-right:1.5px solid #101010;}
+.stage-cell{width:15px;height:6px;border:1px solid #101010;}
+.stage-fill{background:#101010;}
+.scrollbar-none::-webkit-scrollbar{display:none;}
+.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none;}
+.sidebar-link{border-left:2px solid transparent;}
+.sidebar-link.active{border-left:2px solid #F5F5F1;background:rgba(245,245,241,.06);}
+.sidebar-link:hover{background:rgba(245,245,241,.05);}
+.hatch{background-image:repeating-linear-gradient(45deg,#101010 0 1px,transparent 1px 6px);opacity:.5;}
+input::placeholder,textarea::placeholder{color:#9a9a93;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23101010' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;-webkit-appearance:none;appearance:none;}
+.upload-box{border:1.5px dashed var(--line);background:var(--panel);transition:border-color .15s ease;}
+.upload-box:hover{border-color:var(--ink);}
+.chip{border:1px solid var(--line);cursor:pointer;transition:all .12s ease;}
+.chip:hover{border-color:var(--ink);}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.stagepill{border:1px solid var(--line);cursor:pointer;transition:all .12s ease;}
+.stagepill.done{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.modal-overlay{position:fixed;inset:0;background:rgba(16,16,16,.55);z-index:80;display:none;align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--paper);border:1px solid var(--ink);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;}
+.field-label{font-size:10px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;}
+.divider{border-top:1px solid var(--line);}
+.badge{font-size:9px;font-weight:700;letter-spacing:.08em;padding:3px 7px;white-space:nowrap;}
+.progress-track{background:var(--panel);border:1px solid var(--line);height:8px;}
+.progress-fill{background:var(--ink);height:100%;}
+@media (max-width:1024px){
+  #sidebar{position:fixed;left:-280px;top:0;height:100%;z-index:60;transition:left .35s ease;}
+  #sidebar.open{left:0;}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55;}
+  #overlay.show{display:block;}
+}
+</style>
+</head>
+<body class="flex h-screen w-screen overflow-hidden">
+
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<aside id="sidebar" class="w-64 shrink-0 h-full bg-[#101010] text-[#F5F5F1] flex flex-col justify-between">
+  <div>
+    <div class="px-6 py-6 border-b border-white/10">
+      <div class="font-display font-700 text-xl tracking-tight">STUDIO OS</div>
+      <div class="font-mono text-[10px] tracking-[0.25em] opacity-50 mt-1">INTERNAL PMS · V1.0</div>
+    </div>
+    <nav class="mt-4 flex flex-col font-mono text-[13px] h-[calc(100vh-200px)] overflow-y-auto scrollbar-none">
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="index.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-link active flex items-center gap-3 px-6 py-3" href="projects.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18"/></svg>
+        Projects
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="architectural.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+        Architectural
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="electrical.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Electrical
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="mechanical.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Mechanical
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="all-tasks.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        All Tasks
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="design-team.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Design Team
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="finance.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Finance
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="audit-log.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Audit Log
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="supervision-engineers.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Supervision Engineers
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="staff.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Staff
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="clients.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.7-3.2 3.2-5 6.5-5s5.8 1.8 6.5 5"/><circle cx="18" cy="8" r="2.4"/><path d="M16.3 12.2c2.3.4 3.9 1.9 4.4 4.1"/></svg>
+        Clients
+      </a>
+    </nav>
+  </div>
+  <div class="px-6 py-5 border-t border-white/10 font-mono text-[11px] flex items-center gap-3">
+    <div class="w-8 h-8 border border-white/30 flex items-center justify-center">FZ</div>
+    <div>
+      <div>Fehmi Zayed</div>
+      <div class="opacity-50 text-[10px]">Design Manager</div>
+    </div>
+  </div>
+</aside>
+
+<main class="flex-1 h-full overflow-y-auto grid-paper scrollbar-none">
+
+  <header class="sticky top-0 z-40 bg-[var(--paper)]/90 backdrop-blur border-b border-[var(--line)] px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-4 min-w-0">
+      <button onclick="toggleSidebar()" class="lg:hidden shrink-0 border border-[var(--line)] w-9 h-9 flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <a href="projects.html" class="shrink-0 border border-[var(--line)] w-9 h-9 flex items-center justify-center hover:border-[var(--ink)] transition-colors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="min-w-0">
+        <h1 class="font-display font-700 text-2xl leading-none truncate">PRJ-2053</h1>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-1" id="clock"></div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button onclick="pushChange('Project header edited')" class="font-mono text-xs border border-[var(--line)] px-4 py-2 hover:border-[var(--ink)] transition-colors flex items-center gap-2">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit
+      </button>
+      <button onclick="window.print()" class="font-mono text-xs border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors flex items-center gap-2">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
+    </div>
+  </header>
+
+  <div class="px-6 lg:px-10 py-8 space-y-6 max-w-6xl mx-auto">
+
+    <div class="card p-6">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div class="font-mono text-[10px] tracking-[.2em] text-[var(--mute)]">OWNER</div>
+          <h2 class="font-display font-700 text-2xl mt-1">KHALIL IBRAHIM AL-ZIYARA</h2>
+          <div class="font-mono text-[11px] text-[var(--mute)] mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            <span>APP NO: <span class="text-[var(--ink)]">N/A</span></span>
+            <span>PIN: <span class="text-[var(--ink)]">45030179</span></span>
+            <span>DATE: <span class="text-[var(--ink)]">2026-03</span></span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span id="statusBadge" class="badge bg-[#FFF3CD] text-[#7B3F00] inline-block">PENDING</span>
+          <div class="font-mono text-[11px] text-[var(--mute)] mt-2">Old Airport · 2026</div>
+          <div class="font-display font-600 text-lg mt-1">Compound Villa</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card p-4">
+        <div class="field-label mb-2">📷 Perspective Shot</div>
+        <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadPerspective">
+          <span class="text-xl">📷</span>
+          <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
+          <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
+          <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event,'uploadPerspective','Perspective Shot')">
+        </label>
+      </div>
+      <div class="card p-4">
+        <div class="field-label mb-2">🗺️ Site Plan</div>
+        <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadSitePlan">
+          <span class="text-xl">🗺️</span>
+          <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
+          <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
+          <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event,'uploadSitePlan','Site Plan')">
+        </label>
+      </div>
+      <div class="card p-4">
+        <div class="field-label mb-2">📄 Building Permit</div>
+        <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadPermit">
+          <span class="text-xl">📄</span>
+          <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
+          <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
+          <input type="file" accept="image/*,application/pdf" class="hidden" onchange="handleImageUpload(event,'uploadPermit','Building Permit')">
+        </label>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">PROJECT INFORMATION</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5 font-mono text-[12px]" id="infoGrid"></div>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]">PENDING TASKS</div>
+        <button onclick="openTaskModal()" class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors">+ Add Task</button>
+      </div>
+      <div id="taskList" class="space-y-3"></div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4" id="notesHeader">📝 PROJECT NOTES LOG (0)</div>
+      <div class="flex gap-2 mb-4">
+        <input id="noteInput" type="text" placeholder="Add a remark, decision, or follow-up... use @Name to mention" class="flex-1 font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+        <button onclick="addNote()" class="font-mono text-[11px] border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors whitespace-nowrap">+ Add Note</button>
+      </div>
+      <div id="notesList" class="space-y-2"></div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">📊 PROJECT LIFECYCLE STAGE</div>
+      <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Click any stage to mark/unmark it independently</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2" id="stageList"></div>
+      <div class="mt-4 progress-track"><div class="progress-fill" id="stageProgressFill" style="width:0%"></div></div>
+      <div class="font-mono text-[10px] text-[var(--mute)] mt-2" id="stageProgressLabel">0 / 7 stages complete</div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">📅 PLANNED DESIGN TIMELINE</div>
+      <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Will appear automatically once the down payment is recorded, or set start manually below. Villa estimate: 2 months.</div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <div class="field-label mb-1">Manual start date</div>
+          <input id="manualStart" type="date" onchange="updateTimeline()" class="w-full font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+        </div>
+        <div>
+          <div class="field-label mb-1">Planned end date</div>
+          <div id="plannedEnd" class="font-mono text-xs border border-[var(--line)] px-3 py-2 bg-[var(--panel)]">—</div>
+        </div>
+        <div>
+          <div class="field-label mb-2">Project priority</div>
+          <div class="flex gap-2 font-mono text-[11px]" id="priorityChips"></div>
+        </div>
+      </div>
+      <div class="divider mt-5 pt-5">
+        <button id="verifyBtn" onclick="toggleVerify()" class="font-mono text-[11px] border border-[var(--line)] px-4 py-2 hover:border-[var(--ink)] transition-colors">⬜ Not Verified — Click to Verify Project</button>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">🎯 SCOPE OF WORK — Click to toggle</div>
+      <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="scopeChips"></div>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-1">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]">DC1 COORDINATION</div>
+        <span class="font-mono text-[10px] text-[var(--mute)]">Last step before DC2 services submission</span>
+      </div>
+      <div class="divider my-3"></div>
+      <div class="font-mono text-[12px] mb-4">DC1 — Design Approval</div>
+      <div id="dc1Groups" class="space-y-5"></div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">DC2 — SERVICES</div>
+      <div id="dc2Groups" class="space-y-5"></div>
+    </div>
+
+    <div class="card p-6 space-y-5">
+      <div>
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">📐 STRUCTURAL DRAWINGS</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mb-3">Must be verified before IFC can proceed</div>
+        <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="structuralChips"></div>
+      </div>
+      <div class="divider pt-5">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">IFC PACKAGE — CLOSING STAGE</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mb-3">Issued for Construction — final deliverable, unlocks once Structural is Verified</div>
+        <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="ifcChips"></div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">💰 SCOPE OF WORK &amp; PAYMENT TERMS</div>
+      <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Standard: 40% Down · 40% DC1 · 20% DC2</div>
+      <div class="mb-5">
+        <div class="field-label mb-1">ICON Design Fee (QAR)</div>
+        <input id="feeInput" type="number" placeholder="Enter ICON design fee to calculate invoice amounts" oninput="renderInvoices()" class="w-full md:w-64 font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+      </div>
+      <div id="invoiceList" class="space-y-3"></div>
+      <button onclick="addInvoiceLine()" class="mt-4 font-mono text-[11px] border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors">+ Add Invoice Line</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]" id="attachHeader">📎 PROJECT ATTACHMENTS (0)</div>
+          <label class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors cursor-pointer">
+            + Attach Document
+            <input type="file" class="hidden" onchange="addAttachment(event)">
+          </label>
+        </div>
+        <div id="attachList" class="space-y-2 font-mono text-[11px]"></div>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]" id="commentsHeader">MUNICIPALITY COMMENTS (0)</div>
+          <button onclick="addComment()" class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors">+ Add</button>
+        </div>
+        <div id="commentsList" class="space-y-2 font-mono text-[11px]"></div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">RECENT CHANGES (THIS PROJECT)</div>
+      <div id="changesList" class="space-y-2 font-mono text-[11px]"></div>
+    </div>
+
+  </div>
+</main>
+
+<div class="modal-overlay" id="taskModal">
+  <div class="modal-box p-6">
+    <div class="flex items-center justify-between mb-5">
+      <div class="font-display font-700 text-lg">New Task</div>
+      <button onclick="closeTaskModal()" class="w-8 h-8 border border-[var(--line)] flex items-center justify-center hover:border-[var(--ink)]">✕</button>
+    </div>
+    <div class="space-y-4 font-mono text-xs">
+      <div>
+        <div class="field-label mb-1">Task Title</div>
+        <input id="taskTitle" type="text" placeholder="e.g. Prepare architectural DC1 package" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="field-label mb-1">Stage</div>
+          <select id="taskStage" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+            <option>Design Concept</option>
+            <option>DC1</option>
+            <option>DC2</option>
+            <option>Tender Documents</option>
+            <option>Supervision</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label mb-1">Department</div>
+          <select id="taskDept" onchange="populateEngineerOptions()" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+            <option>Architectural</option>
+            <option>Mechanical</option>
+            <option>Electrical</option>
+            <option>Structural</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="field-label mb-1">Assigned To</div>
+        <select id="taskAssignee" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]"></select>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <div class="field-label mb-1">Start Date</div>
+          <input id="taskStart" type="date" onchange="recalcTaskEnd()" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+        </div>
+        <div>
+          <div class="field-label mb-1">Duration (days)</div>
+          <input id="taskDuration" type="number" value="5" min="1" onchange="recalcTaskEnd()" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+        </div>
+        <div>
+          <div class="field-label mb-1">End Date</div>
+          <div id="taskEndPreview" class="border border-[var(--line)] px-3 py-2 bg-[var(--panel)]">—</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="field-label mb-1">Status</div>
+          <select id="taskStatus" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+            <option>Uncharted</option>
+            <option>Under Study</option>
+            <option>Comment</option>
+            <option>On Going</option>
+            <option>Completed</option>
+            <option>Approved</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label mb-1">Priority</div>
+          <select id="taskPriority" class="w-full border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+            <option>None</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+      </div>
+      <label class="flex items-center gap-2">
+        <input id="taskOnHold" type="checkbox">
+        On hold
+      </label>
+    </div>
+    <div class="flex gap-2 mt-6">
+      <button onclick="closeTaskModal()" class="flex-1 font-mono text-xs border border-[var(--line)] px-4 py-2.5 hover:border-[var(--ink)] transition-colors">Cancel</button>
+      <button onclick="saveTask()" class="flex-1 font-mono text-xs border border-[var(--ink)] px-4 py-2.5 bg-[var(--ink)] text-[var(--paper)] hover:opacity-85 transition-opacity">Assign Task</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const engineers = {
+  Architectural: ["Nasser — General Manager","Nisreen — Management","Fehmi Zayed — Design Manager","Ahmed Youssef — Senior Architect"],
+  Mechanical: ["Mona Adel — Senior Mechanical Engineer"],
+  Electrical: ["Karim Nabil — Senior Electrical Engineer"],
+  Structural: ["Shaban Hassan — Senior Structural Engineer"]
+};
+
+const statusColors = {
+  "Approved":"bg-[#D5F5E3] text-[#145A32]",
+  "Under Study":"bg-[#FFF3CD] text-[#7B3F00]",
+  "Comment":"bg-[#DCEBFB] text-[#1B4F72]",
+  "Uncharted":"bg-[#EFEFEA] text-[var(--mute)]",
+  "N/A":"bg-[#EFEFEA] text-[var(--mute)]",
+  "Not Set":"bg-[#EFEFEA] text-[var(--mute)]",
+  "Not Started":"bg-[#EFEFEA] text-[var(--mute)]",
+  "In Progress":"bg-[#DCEBFB] text-[#1B4F72]",
+  "Under Review":"bg-[#FFF3CD] text-[#7B3F00]",
+  "Verified":"bg-[#D5F5E3] text-[#145A32]",
+  "Uncompleted":"bg-[#FFE4E4] text-[#8B0000]",
+  "Completed":"bg-[#D5F5E3] text-[#145A32]",
+  "Approved Task":"bg-[#D5F5E3] text-[#145A32]",
+  "On Going":"bg-[#DCEBFB] text-[#1B4F72]"
+};
+
+const project = {
+  info: {
+    Owner:"Khalil Ibrahim Al-Ziyara", Location:"Old Airport", Type:"Compound Villa", Floors:"—",
+    "Plot Area":"4,766 m²", BUA:"—", FAR:"—", "Apts / Parking":"— / —",
+    Contractor:"—", "Est. Const. Value":"—", "Actual Const. Value":"—", "Sup. Consultant":"—"
+  },
+  dc1Progress:0,
+  tasks:[],
+  notes:[],
+  stages:[
+    {name:"RFQ",icon:"📋",done:true},
+    {name:"Contract Submitted",icon:"📝",done:true},
+    {name:"Contract Signed",icon:"✅",done:true},
+    {name:"Design",icon:"📐",done:true},
+    {name:"Tendering",icon:"📊",done:false},
+    {name:"Supervision",icon:"🏗️",done:false},
+    {name:"Closed",icon:"🔒",done:false}
+  ],
+  priority:"None",
+  verified:false,
+  scope:[
+    {name:"Design & Permits (DC1/DC2)",done:true},
+    {name:"Interior Design",done:false},
+    {name:"Tender Action",done:false},
+    {name:"BOQ Preparation",done:false},
+    {name:"Supervision",done:false}
+  ],
+  dc1: [
+    {dept:"Architectural",icon:"🏛",items:["Architecture (AR)","Roads (Ashghal)","MOTC DC1","Civil Aviation (CAV)","Qatar Rail DC1","Infrastructure Planning","Urban Planning","Higher Education (MOEHE)","Technical Affairs (Private Eng Office)","Ministry of Environment & Climate Change (MECC)","Ministry of Industry & Mineral Resources (MIM)","Qatar Tourism (TOUR)","Public Health (MOPH)","General Cleanliness Project","Livestock Department"]},
+    {dept:"Electrical",icon:"⚡",items:["KAHRAMAA EL"]},
+    {dept:"Mechanical",icon:"⚙",items:["Life Safety Plan (LSP)","KAHRAMAA WS","Ashghal Drainage","Lusail Drainage"]}
+  ],
+  dc2: [
+    {dept:"Architectural Services",icon:"🏛",items:["Qatar Rail DC2","MOTC DC2"]},
+    {dept:"Electrical Services",icon:"⚡",items:["KAHRAMAA EL","Telecom (Ooredoo)","Fire Alarm (MOI)","CCTV / Security (Client Specialist)"]},
+    {dept:"Mechanical Services",icon:"⚙",items:["KAHRAMAA WS","Ashghal Drainage","Fire Fighting (MOI)","Ventilation (MOI)","Marafiq Lusail — Air Conditioning","Marafiq Lusail — Gas Supply"]}
+  ],
+  dc1Status:{},
+  dc2Status:{},
+  structuralStatus:"Not Set",
+  ifcStatus:"Not Set",
+  fee:null,
+  invoices:[
+    {label:"1st Invoice — 40% Down Payment",pct:40,status:"Draft"},
+    {label:"2nd Invoice — 40% DC1 Approval",pct:40,status:"Draft"},
+    {label:"3rd Invoice — 20% DC2 Approval",pct:20,status:"Draft"}
+  ],
+  attachments:[],
+  comments:[],
+  changes:[]
+};
+
+function pushChange(text){
+  const now = new Date();
+  const stamp = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ' ' + now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  project.changes.unshift(stamp + ' — ' + text);
+  renderChanges();
+}
+
+function renderChanges(){
+  const el = document.getElementById('changesList');
+  if(project.changes.length === 0){
+    el.innerHTML = '<div class="text-[var(--mute)]">No changes recorded yet.</div>';
+    return;
+  }
+  el.innerHTML = project.changes.map(c => '<div class="border-l-2 border-[var(--line)] pl-3 py-0.5">'+c+'</div>').join('');
+}
+
+function renderInfoGrid(){
+  const el = document.getElementById('infoGrid');
+  el.innerHTML = Object.keys(project.info).map(k => `
+    <div>
+      <div class="field-label mb-1">${k}</div>
+      <div class="text-[13px]">${project.info[k]}</div>
+    </div>
+  `).join('') + `
+    <div>
+      <div class="field-label mb-1">DC1 Progress</div>
+      <div class="text-[13px]">${project.dc1Progress}%</div>
+    </div>
+  `;
+}
+
+function statusBadgeHTML(status){
+  const cls = statusColors[status] || statusColors["Not Set"];
+  return '<span class="badge '+cls+'">'+status.toUpperCase()+'</span>';
+}
+
+function renderTasks(){
+  const el = document.getElementById('taskList');
+  if(project.tasks.length === 0){
+    el.innerHTML = '<div class="font-mono text-[11px] text-[var(--mute)]">✓ No pending tasks</div>';
+    return;
+  }
+  el.innerHTML = project.tasks.map((t,i) => `
+    <div class="border border-[var(--line)] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <div class="font-mono text-[12px] font-bold">${t.title}</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mt-1">${t.stage} · ${t.dept} · assigned to ${t.assignee}</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mt-0.5">Start ${t.start || '—'} · ${t.duration}d · Ends ${t.end || '—'}${t.onHold ? ' · ON HOLD' : ''}</div>
+      </div>
+      <div class="flex items-center gap-2">
+        ${statusBadgeHTML(t.status)}
+        <button onclick="cycleTaskStatus(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 hover:border-[var(--ink)]">Advance</button>
+        <button onclick="removeTask(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 hover:border-[var(--ink)]">Remove</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+const taskStatusCycle = ["Uncharted","Under Study","Comment","On Going","Completed","Approved"];
+function cycleTaskStatus(i){
+  const cur = taskStatusCycle.indexOf(project.tasks[i].status);
+  project.tasks[i].status = taskStatusCycle[(cur+1) % taskStatusCycle.length];
+  pushChange('Task "'+project.tasks[i].title+'" status set to '+project.tasks[i].status);
+  renderTasks();
+}
+function removeTask(i){
+  const t = project.tasks[i];
+  project.tasks.splice(i,1);
+  pushChange('Task "'+t.title+'" removed');
+  renderTasks();
+}
+
+function openTaskModal(){
+  populateEngineerOptions();
+  document.getElementById('taskModal').classList.add('show');
+}
+function closeTaskModal(){
+  document.getElementById('taskModal').classList.remove('show');
+}
+function populateEngineerOptions(){
+  const dept = document.getElementById('taskDept').value;
+  const sel = document.getElementById('taskAssignee');
+  sel.innerHTML = engineers[dept].map(n => '<option>'+n+'</option>').join('');
+}
+function recalcTaskEnd(){
+  const start = document.getElementById('taskStart').value;
+  const dur = parseInt(document.getElementById('taskDuration').value || '0',10);
+  const preview = document.getElementById('taskEndPreview');
+  if(!start){ preview.textContent = '—'; return; }
+  const d = new Date(start);
+  d.setDate(d.getDate() + dur);
+  preview.textContent = d.toISOString().slice(0,10);
+}
+function saveTask(){
+  const title = document.getElementById('taskTitle').value.trim();
+  if(!title){ return; }
+  const start = document.getElementById('taskStart').value;
+  const duration = parseInt(document.getElementById('taskDuration').value || '0',10);
+  let end = '';
+  if(start){
+    const d = new Date(start);
+    d.setDate(d.getDate() + duration);
+    end = d.toISOString().slice(0,10);
+  }
+  project.tasks.push({
+    title,
+    stage: document.getElementById('taskStage').value,
+    dept: document.getElementById('taskDept').value,
+    assignee: document.getElementById('taskAssignee').value,
+    start, duration, end,
+    status: document.getElementById('taskStatus').value,
+    priority: document.getElementById('taskPriority').value,
+    onHold: document.getElementById('taskOnHold').checked
+  });
+  pushChange('Task "'+title+'" assigned to '+document.getElementById('taskAssignee').value);
+  renderTasks();
+  closeTaskModal();
+  document.getElementById('taskTitle').value = '';
+}
+
+function addNote(){
+  const input = document.getElementById('noteInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const now = new Date();
+  project.notes.unshift({user:'Fehmi Zayed', date: now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}), text});
+  input.value = '';
+  pushChange('Note added to project log');
+  renderNotes();
+}
+function renderNotes(){
+  document.getElementById('notesHeader').textContent = '📝 PROJECT NOTES LOG (' + project.notes.length + ')';
+  const el = document.getElementById('notesList');
+  if(project.notes.length === 0){
+    el.innerHTML = '<div class="font-mono text-[11px] text-[var(--mute)]">No notes yet. Add one above to track project remarks, decisions, or follow-ups.</div>';
+    return;
+  }
+  el.innerHTML = project.notes.map(n => `
+    <div class="border-l-2 border-[var(--line)] pl-3 py-1">
+      <div class="font-mono text-[11px]">${n.text}</div>
+      <div class="font-mono text-[9px] text-[var(--mute)] mt-1">${n.user} · ${n.date}</div>
+    </div>
+  `).join('');
+}
+
+function renderStages(){
+  const el = document.getElementById('stageList');
+  el.innerHTML = project.stages.map((s,i) => `
+    <div onclick="toggleStage(${i})" class="stagepill ${s.done ? 'done' : ''} px-3 py-3 text-center font-mono text-[10px]">
+      <div class="text-lg leading-none mb-1">${s.icon}</div>
+      ${s.name}
+    </div>
+  `).join('');
+  const doneCount = project.stages.filter(s => s.done).length;
+  document.getElementById('stageProgressFill').style.width = Math.round(doneCount/7*100) + '%';
+  document.getElementById('stageProgressLabel').textContent = doneCount + ' / 7 stages complete';
+}
+function toggleStage(i){
+  project.stages[i].done = !project.stages[i].done;
+  pushChange('Lifecycle stage "'+project.stages[i].name+'" ' + (project.stages[i].done ? 'marked' : 'unmarked'));
+  renderStages();
+}
+
+function updateTimeline(){
+  const start = document.getElementById('manualStart').value;
+  const el = document.getElementById('plannedEnd');
+  if(!start){ el.textContent = '—'; return; }
+  const d = new Date(start);
+  d.setMonth(d.getMonth() + 2);
+  el.textContent = d.toISOString().slice(0,10);
+  pushChange('Manual design start date set to ' + start);
+}
+
+function renderPriorityChips(){
+  const options = ["None","High","Medium","Low"];
+  const labels = {"None":"None","High":"🔴 High","Medium":"🟡 Medium","Low":"🟢 Low"};
+  const el = document.getElementById('priorityChips');
+  el.innerHTML = options.map(o => `<div onclick="setPriority('${o}')" class="chip ${project.priority===o?'on':''} px-3 py-1.5">${labels[o]}</div>`).join('');
+}
+function setPriority(p){
+  project.priority = p;
+  pushChange('Project priority set to ' + p);
+  renderPriorityChips();
+}
+
+function toggleVerify(){
+  project.verified = !project.verified;
+  pushChange('Project ' + (project.verified ? 'verified' : 'unverified'));
+  renderVerify();
+}
+function renderVerify(){
+  const btn = document.getElementById('verifyBtn');
+  if(project.verified){
+    btn.textContent = '✅ Verified — Click to Unverify';
+    btn.classList.add('bg-[var(--ink)]','text-[var(--paper)]');
+  } else {
+    btn.textContent = '⬜ Not Verified — Click to Verify Project';
+    btn.classList.remove('bg-[var(--ink)]','text-[var(--paper)]');
+  }
+}
+
+function renderScope(){
+  const el = document.getElementById('scopeChips');
+  el.innerHTML = project.scope.map((s,i) => `<div onclick="toggleScope(${i})" class="chip ${s.done?'on':''} px-3 py-1.5">${s.done?'✓ ':''}${s.name}</div>`).join('');
+}
+function toggleScope(i){
+  project.scope[i].done = !project.scope[i].done;
+  pushChange('Scope item "'+project.scope[i].name+'" ' + (project.scope[i].done ? 'completed' : 'reopened'));
+  renderScope();
+}
+
+const dc1DcOptions = ["Not Set","Approved","Under Study","Comment","Uncharted","N/A"];
+const drawingOptions = ["Not Set","Not Started","In Progress","Under Review","Verified"];
+
+function renderDcGroups(groups, statusMap, containerId, tagLabel, prefix){
+  const el = document.getElementById(containerId);
+  el.innerHTML = groups.map(g => `
+    <div>
+      <div class="font-mono text-[11px] font-bold mb-2">${g.icon} ${g.dept}</div>
+      <div class="space-y-1.5">
+        ${g.items.map(item => {
+          const key = prefix + '_' + g.dept + '_' + item;
+          const status = statusMap[key] || "Not Set";
+          return `
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--line)] pb-1.5">
+            <div class="font-mono text-[11px]">${item} <span class="text-[var(--mute)] text-[9px]">${tagLabel}</span></div>
+            <select onchange="setDcStatus('${containerId}','${key}',this.value)" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 bg-[var(--paper)] outline-none focus:border-[var(--ink)]">
+              ${dc1DcOptions.map(o => `<option value="${o}" ${o===status?'selected':''}>${o}</option>`).join('')}
+            </select>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function setDcStatus(containerId, key, value){
+  const map = containerId === 'dc1Groups' ? project.dc1Status : project.dc2Status;
+  map[key] = value;
+  pushChange('Status updated: ' + key.split('_').slice(2).join(' ') + ' → ' + value);
+  recalcDc1Progress();
+  renderInfoGrid();
+}
+
+function recalcDc1Progress(){
+  const allKeys = [];
+  project.dc1.forEach(g => g.items.forEach(item => allKeys.push('dc1_' + g.dept + '_' + item)));
+  const approved = allKeys.filter(k => project.dc1Status[k] === 'Approved' || project.dc1Status[k] === 'N/A').length;
+  project.dc1Progress = allKeys.length ? Math.round(approved / allKeys.length * 100) : 0;
+}
+
+function renderStructuralChips(){
+  const el = document.getElementById('structuralChips');
+  el.innerHTML = drawingOptions.map(o => `<div onclick="setStructural('${o}')" class="chip ${project.structuralStatus===o?'on':''} px-3 py-1.5">${o}</div>`).join('');
+}
+function setStructural(v){
+  project.structuralStatus = v;
+  pushChange('Structural drawings status set to ' + v);
+  renderStructuralChips();
+  renderIfcChips();
+}
+function renderIfcChips(){
+  const el = document.getElementById('ifcChips');
+  const unlocked = project.structuralStatus === 'Verified';
+  el.innerHTML = drawingOptions.map(o => `<div onclick="${unlocked ? `setIfc('${o}')` : ''}" class="chip ${project.ifcStatus===o?'on':''} px-3 py-1.5 ${unlocked ? '' : 'opacity-40 cursor-not-allowed'}">${o}</div>`).join('');
+}
+function setIfc(v){
+  project.ifcStatus = v;
+  pushChange('IFC package status set to ' + v);
+  renderIfcChips();
+}
+
+const invoiceStatusOptions = ["Draft","Issued / Due","Paid","Overdue","Cancelled"];
+function renderInvoices(){
+  const fee = parseFloat(document.getElementById('feeInput').value || '0');
+  project.fee = fee || null;
+  const el = document.getElementById('invoiceList');
+  el.innerHTML = project.invoices.map((inv,i) => {
+    const amount = fee ? (fee * inv.pct / 100).toLocaleString('en-US',{maximumFractionDigits:0}) + ' QAR' : '—';
+    return `
+    <div class="border border-[var(--line)] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <div class="font-mono text-[12px] font-bold">${inv.label}</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mt-1">${inv.pct}% · ${amount}</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <select onchange="setInvoiceStatus(${i},this.value)" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 bg-[var(--paper)] outline-none focus:border-[var(--ink)]">
+          ${invoiceStatusOptions.map(o => `<option ${o===inv.status?'selected':''}>${o}</option>`).join('')}
+        </select>
+        <button onclick="editInvoiceLabel(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 hover:border-[var(--ink)]">Edit</button>
+        <button onclick="removeInvoice(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 hover:border-[var(--ink)]">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function setInvoiceStatus(i,v){
+  project.invoices[i].status = v;
+  pushChange('Invoice "'+project.invoices[i].label+'" status set to '+v);
+  renderInvoices();
+}
+function editInvoiceLabel(i){
+  const newLabel = prompt('Edit invoice label', project.invoices[i].label);
+  if(newLabel){ project.invoices[i].label = newLabel; pushChange('Invoice line renamed to '+newLabel); renderInvoices(); }
+}
+function removeInvoice(i){
+  const label = project.invoices[i].label;
+  project.invoices.splice(i,1);
+  pushChange('Invoice line "'+label+'" removed');
+  renderInvoices();
+}
+function addInvoiceLine(){
+  const label = prompt('Invoice line description', 'Additional Invoice');
+  if(!label) return;
+  const pct = parseFloat(prompt('Percentage of total fee', '10')) || 0;
+  project.invoices.push({label, pct, status:'Draft'});
+  pushChange('Invoice line "'+label+'" added');
+  renderInvoices();
+}
+
+function addAttachment(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  project.attachments.unshift({name:file.name, date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})});
+  pushChange('Attachment "'+file.name+'" uploaded');
+  renderAttachments();
+}
+function renderAttachments(){
+  document.getElementById('attachHeader').textContent = '📎 PROJECT ATTACHMENTS (' + project.attachments.length + ')';
+  const el = document.getElementById('attachList');
+  if(project.attachments.length === 0){
+    el.innerHTML = '<div class="text-[var(--mute)]">No files attached.</div>';
+    return;
+  }
+  el.innerHTML = project.attachments.map((a,i) => `
+    <div class="flex items-center justify-between border-b border-[var(--line)] pb-1.5">
+      <span>📄 ${a.name}</span>
+      <span class="text-[var(--mute)] text-[10px]">${a.date}</span>
+    </div>
+  `).join('');
+}
+
+function addComment(){
+  const text = prompt('Municipality comment');
+  if(!text) return;
+  project.comments.unshift({text, date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})});
+  pushChange('Municipality comment logged');
+  renderComments();
+}
+function renderComments(){
+  document.getElementById('commentsHeader').textContent = 'MUNICIPALITY COMMENTS (' + project.comments.length + ')';
+  const el = document.getElementById('commentsList');
+  if(project.comments.length === 0){
+    el.innerHTML = '<div class="text-[var(--mute)]">No comments logged.</div>';
+    return;
+  }
+  el.innerHTML = project.comments.map(c => `
+    <div class="border-l-2 border-[var(--line)] pl-3 py-1">
+      <div>${c.text}</div>
+      <div class="text-[var(--mute)] text-[9px] mt-1">${c.date}</div>
+    </div>
+  `).join('');
+}
+
+function handleImageUpload(evt, boxId, label){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const box = document.getElementById(boxId);
+    box.innerHTML = '<img src="'+e.target.result+'" class="w-full h-32 object-cover">' + box.querySelector('input').outerHTML;
+    box.querySelector('input').addEventListener('change', function(ev){ handleImageUpload(ev, boxId, label); });
+  };
+  reader.readAsDataURL(file);
+  pushChange(label + ' image uploaded');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+function tick(){
+  const d = new Date();
+  document.getElementById('clock').textContent = d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-GB');
+}
+tick();
+setInterval(tick,1000);
+
+renderInfoGrid();
+renderTasks();
+renderNotes();
+renderStages();
+renderPriorityChips();
+renderVerify();
+renderScope();
+renderDcGroups(project.dc1, project.dc1Status, 'dc1Groups', 'DC1', 'dc1');
+renderDcGroups(project.dc2, project.dc2Status, 'dc2Groups', 'DC2', 'dc2');
+renderStructuralChips();
+renderIfcChips();
+renderInvoices();
+renderAttachments();
+renderComments();
+renderChanges();
+populateEngineerOptions();
+</script>
+
+</body>
+</html>

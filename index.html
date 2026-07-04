@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio OS — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F5F1;
+  --ink:#101010;
+  --line:#D8D8D2;
+  --mute:#6E6E68;
+  --panel:#EFEFEA;
+}
+*{-webkit-font-smoothing:antialiased;}
+html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);}
+body{font-family:'Inter',sans-serif;}
+.font-display{font-family:'Space Grotesk',sans-serif;}
+.font-mono{font-family:'IBM Plex Mono',monospace;}
+::selection{background:#101010;color:#F5F5F1;}
+.grid-paper{
+  background-image:linear-gradient(rgba(16,16,16,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(16,16,16,.05) 1px,transparent 1px);
+  background-size:36px 36px;
+}
+.card{background:var(--paper);border:1px solid var(--line);position:relative;}
+.card::before,.card::after{content:"";position:absolute;width:9px;height:9px;top:-1px;}
+.card::before{left:-1px;border-top:1.5px solid #101010;border-left:1.5px solid #101010;}
+.card::after{right:-1px;border-top:1.5px solid #101010;border-right:1.5px solid #101010;}
+.tick-row{background-image:repeating-linear-gradient(90deg,#101010 0 1px,transparent 1px 8px);height:1px;opacity:.25;}
+.stage-cell{width:15px;height:6px;border:1px solid #101010;}
+.stage-fill{background:#101010;}
+.stage-half{background:linear-gradient(90deg,#101010 50%,transparent 50%);}
+.scrollbar-none::-webkit-scrollbar{display:none;}
+.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none;}
+.sidebar-link{border-left:2px solid transparent;}
+.sidebar-link.active{border-left:2px solid #F5F5F1;background:rgba(245,245,241,.06);}
+.sidebar-link:hover{background:rgba(245,245,241,.05);}
+.hatch{background-image:repeating-linear-gradient(45deg,#101010 0 1px,transparent 1px 6px);opacity:.5;}
+input::placeholder{color:#9a9a93;}
+@media (max-width:1024px){
+  #sidebar{position:fixed;left:-280px;top:0;height:100%;z-index:60;transition:left .35s ease;}
+  #sidebar.open{left:0;}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55;}
+  #overlay.show{display:block;}
+}
+</style>
+</head>
+<body class="flex h-screen w-screen overflow-hidden">
+
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<aside id="sidebar" class="w-64 shrink-0 h-full bg-[#101010] text-[#F5F5F1] flex flex-col justify-between">
+  <div>
+    <div class="px-6 py-6 border-b border-white/10">
+      <div class="font-display font-700 text-xl tracking-tight">STUDIO OS</div>
+      <div class="font-mono text-[10px] tracking-[0.25em] opacity-50 mt-1">INTERNAL PMS · V1.0</div>
+    </div>
+    <nav class="mt-4 flex flex-col font-mono text-[13px] h-[calc(100vh-200px)] overflow-y-auto scrollbar-none">
+      <a class="sidebar-link active flex items-center gap-3 px-6 py-3" href="index.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="projects.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18"/></svg>
+        Projects
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="architectural.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+        Architectural
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="electrical.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Electrical
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="mechanical.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Mechanical
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="all-tasks.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        All Tasks
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="design-team.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Design Team
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="finance.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Finance
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="audit-log.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Audit Log
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="supervision-engineers.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Supervision Engineers
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="staff.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Staff
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="clients.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.7-3.2 3.2-5 6.5-5s5.8 1.8 6.5 5"/><circle cx="18" cy="8" r="2.4"/><path d="M16.3 12.2c2.3.4 3.9 1.9 4.4 4.1"/></svg>
+        Clients
+      </a>
+    </nav>
+  </div>
+  <div class="px-6 py-5 border-t border-white/10 font-mono text-[11px] flex items-center gap-3">
+    <div class="w-8 h-8 border border-white/30 flex items-center justify-center">FZ</div>
+    <div>
+      <div>Fehmi Zayed</div>
+      <div class="opacity-50 text-[10px]">Design Manager</div>
+    </div>
+  </div>
+</aside>
+
+<main class="flex-1 h-full overflow-y-auto grid-paper scrollbar-none">
+
+  <header class="sticky top-0 z-40 bg-[var(--paper)]/90 backdrop-blur border-b border-[var(--line)] px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <button onclick="toggleSidebar()" class="lg:hidden border border-[var(--line)] w-9 h-9 flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h1 class="font-display font-700 text-2xl leading-none">Dashboard</h1>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-1" id="clock"></div>
+      </div>
+    </div>
+    <div class="hidden md:flex items-center gap-2 flex-1 max-w-sm border border-[var(--line)] px-3 py-2">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="opacity-50"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input class="font-mono text-xs bg-transparent outline-none w-full" placeholder="Search project no, client, engineer…">
+    </div>
+    <a href="./pages/new-project.html" class="font-mono text-xs border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors inline-flex items-center justify-center">+ NEW PROJECT</a>
+  </header>
+
+  <div class="px-6 lg:px-10 py-8 space-y-8">
+
+    <section class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="card p-5">
+        <div class="font-mono text-[10px] tracking-widest text-[var(--mute)] mb-3">ACTIVE PROJECTS</div>
+        <div class="font-display font-700 text-4xl">24</div>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-2">+3 opened this month</div>
+      </div>
+      <div class="card p-5">
+        <div class="font-mono text-[10px] tracking-widest text-[var(--mute)] mb-3">CLOSED — UNDER MOD.</div>
+        <div class="font-display font-700 text-4xl">6</div>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-2">Open change orders</div>
+      </div>
+      <div class="card p-5">
+        <div class="font-mono text-[10px] tracking-widest text-[var(--mute)] mb-3">OVERDUE STAGES</div>
+        <div class="font-display font-700 text-4xl">5</div>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-2">Flagged past plan date</div>
+      </div>
+      <div class="card p-5">
+        <div class="font-mono text-[10px] tracking-widest text-[var(--mute)] mb-3">STRUCTURAL PENDING</div>
+        <div class="font-display font-700 text-4xl">3</div>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-2">Awaiting senior review</div>
+      </div>
+      <div class="card p-5 col-span-2 lg:col-span-1">
+        <div class="font-mono text-[10px] tracking-widest text-[var(--mute)] mb-3">TOTAL OUTSTANDING</div>
+        <div class="font-display font-700 text-3xl">QAR 1.28M</div>
+        <div class="font-mono text-[11px] text-[var(--mute)] mt-2">Issued + Overdue + Partial rem.</div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+      <div class="xl:col-span-2 card p-0 flex flex-col">
+        <div class="flex items-center justify-between px-6 pt-5">
+          <div class="font-mono text-[11px] tracking-widest text-[var(--mute)]">PROJECT PIPELINE — LIVE</div>
+          <div class="flex gap-1 font-mono text-[11px]" id="filters">
+            <button data-f="all" class="filter-btn px-2.5 py-1 border border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]">All</button>
+            <button data-f="active" class="filter-btn px-2.5 py-1 border border-[var(--line)] text-[var(--mute)]">Active</button>
+            <button data-f="closed" class="filter-btn px-2.5 py-1 border border-[var(--line)] text-[var(--mute)]">Closed</button>
+            <button data-f="mod" class="filter-btn px-2.5 py-1 border border-[var(--line)] text-[var(--mute)]">Under Mod.</button>
+          </div>
+        </div>
+        <div class="tick-row mx-6 mt-4"></div>
+        <div class="overflow-x-auto">
+        <table class="w-full mt-2 font-mono text-[12px]">
+          <thead>
+            <tr class="text-left text-[var(--mute)] text-[10px] tracking-widest">
+              <th class="px-6 py-2 font-normal">PROJECT</th>
+              <th class="px-2 py-2 font-normal">CLIENT</th>
+              <th class="px-2 py-2 font-normal">STAGE 1–7</th>
+              <th class="px-2 py-2 font-normal">STATUS</th>
+              <th class="px-2 py-2 font-normal">ENGINEER</th>
+              <th class="px-6 py-2 font-normal text-right">VARIANCE</th>
+            </tr>
+          </thead>
+          <tbody id="projectRows"></tbody>
+        </table>
+        </div>
+        <div class="px-6 py-4 mt-auto border-t border-[var(--line)] font-mono text-[10px] text-[var(--mute)]">SHOWING <span id="rowCount">8</span> OF 24 PROJECTS</div>
+      </div>
+
+      <div class="flex flex-col gap-6">
+
+        <div class="card p-6">
+          <div class="font-mono text-[11px] tracking-widest text-[var(--mute)] mb-4">STRUCTURAL QUEUE</div>
+          <div class="space-y-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-sm">PRJ-2031 · Lusail Tower B</div>
+                <div class="font-mono text-[10px] text-[var(--mute)] mt-1">In Process · 2d in queue</div>
+              </div>
+              <div class="w-2.5 h-2.5 border border-[var(--ink)] mt-1"></div>
+            </div>
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-sm">PRJ-2044 · Al Waha Villas</div>
+                <div class="font-mono text-[10px] text-[var(--mute)] mt-1">Not Started · 5d in queue</div>
+              </div>
+              <div class="w-2.5 h-2.5 border border-[var(--ink)] mt-1 opacity-30"></div>
+            </div>
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-sm">PRJ-1998 · Barwa Office Park</div>
+                <div class="font-mono text-[10px] text-[var(--mute)] mt-1">Completed · notify Shaban (IFC)</div>
+              </div>
+              <div class="w-2.5 h-2.5 bg-[var(--ink)] mt-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="font-mono text-[11px] tracking-widest text-[var(--mute)] mb-4">LEGEND</div>
+          <div class="grid grid-cols-2 gap-y-3 font-mono text-[11px]">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 bg-[var(--ink)] inline-block"></span>Achieved</div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 border border-[var(--ink)] inline-block"></span>Upcoming</div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 hatch inline-block"></span>Overdue</div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 border border-[var(--ink)] opacity-30 inline-block"></span>Not Started</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+      <div class="card p-6 xl:col-span-2">
+        <div class="flex items-center justify-between mb-5">
+          <div class="font-mono text-[11px] tracking-widest text-[var(--mute)]">ACTIVITY &amp; MENTIONS</div>
+          <div class="font-mono text-[10px] text-[var(--mute)]">LIVE FEED</div>
+        </div>
+        <div class="space-y-5">
+          <div class="flex gap-4">
+            <div class="w-7 h-7 border border-[var(--line)] flex items-center justify-center font-mono text-[10px] shrink-0">NS</div>
+            <div>
+              <div class="text-sm"><span class="font-medium">Nisreen</span> raised a change order on <span class="font-mono">PRJ-1988</span> — awaiting review from <span class="font-mono">@Fehmi</span></div>
+              <div class="font-mono text-[10px] text-[var(--mute)] mt-1">14 minutes ago</div>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-7 h-7 border border-[var(--line)] flex items-center justify-center font-mono text-[10px] shrink-0">SB</div>
+            <div>
+              <div class="text-sm"><span class="font-medium">Shaban</span> moved <span class="font-mono">PRJ-1998</span> IFC stage to In Progress</div>
+              <div class="font-mono text-[10px] text-[var(--mute)] mt-1">1 hour ago</div>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-7 h-7 border border-[var(--line)] flex items-center justify-center font-mono text-[10px] shrink-0">AC</div>
+            <div>
+              <div class="text-sm"><span class="font-medium">Accountant</span> marked invoice <span class="font-mono">INV-0552</span> (DC2 Payment, PRJ-2031) as Overdue</div>
+              <div class="font-mono text-[10px] text-[var(--mute)] mt-1">3 hours ago</div>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-7 h-7 border border-[var(--line)] flex items-center justify-center font-mono text-[10px] shrink-0">MK</div>
+            <div>
+              <div class="text-sm"><span class="font-medium">Mona</span> requested self-replace on <span class="font-mono">PRJ-2010</span>, electrical discipline — pending approval</div>
+              <div class="font-mono text-[10px] text-[var(--mute)] mt-1">Yesterday</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-6">
+        <div class="card p-6">
+          <div class="font-mono text-[11px] tracking-widest text-[var(--mute)] mb-4">FINANCIAL SNAPSHOT</div>
+          <div class="space-y-3 font-mono text-[12px]">
+            <div class="flex justify-between items-center"><span class="text-[var(--mute)]">Draft</span><span>QAR 0</span></div>
+            <div class="h-1 bg-[var(--line)]"><div class="h-1 bg-[var(--ink)]" style="width:0%"></div></div>
+            <div class="flex justify-between items-center"><span class="text-[var(--mute)]">Issued</span><span>QAR 640,000</span></div>
+            <div class="h-1 bg-[var(--line)]"><div class="h-1 bg-[var(--ink)]" style="width:50%"></div></div>
+            <div class="flex justify-between items-center"><span class="text-[var(--mute)]">Overdue</span><span>QAR 312,600</span></div>
+            <div class="h-1 bg-[var(--line)]"><div class="h-1 hatch" style="width:24%"></div></div>
+            <div class="flex justify-between items-center"><span class="text-[var(--mute)]">Partially Paid (rem.)</span><span>QAR 332,000</span></div>
+            <div class="h-1 bg-[var(--line)]"><div class="h-1 bg-[var(--ink)] opacity-60" style="width:26%"></div></div>
+          </div>
+          <div class="border-t border-[var(--line)] mt-5 pt-4 font-mono text-[11px] leading-relaxed text-[var(--mute)]">
+            TOTAL OUTSTANDING = Σ Issued + Σ Overdue + Σ Remaining Partial<br>= <span class="text-[var(--ink)]">QAR 1,284,600</span>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="font-mono text-[11px] tracking-widest text-[var(--mute)] mb-4">TENDERING TRACKER</div>
+          <table class="w-full font-mono text-[11px]">
+            <thead>
+              <tr class="text-[var(--mute)] text-left">
+                <th class="font-normal pb-2">PROJECT</th>
+                <th class="font-normal pb-2">BOQ</th>
+                <th class="font-normal pb-2">SPEC</th>
+                <th class="font-normal pb-2">COND.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t border-[var(--line)]">
+                <td class="py-2">PRJ-2031</td>
+                <td><span class="w-2 h-2 bg-[var(--ink)] inline-block"></span></td>
+                <td><span class="w-2 h-2 bg-[var(--ink)] inline-block"></span></td>
+                <td><span class="w-2 h-2 border border-[var(--ink)] inline-block"></span></td>
+              </tr>
+              <tr class="border-t border-[var(--line)]">
+                <td class="py-2">PRJ-2044</td>
+                <td><span class="w-2 h-2 bg-[var(--ink)] opacity-60 inline-block"></span></td>
+                <td><span class="w-2 h-2 border border-[var(--ink)] opacity-30 inline-block"></span></td>
+                <td><span class="w-2 h-2 border border-[var(--ink)] opacity-30 inline-block"></span></td>
+              </tr>
+              <tr class="border-t border-[var(--line)]">
+                <td class="py-2">PRJ-1988</td>
+                <td><span class="w-2 h-2 bg-[var(--ink)] inline-block"></span></td>
+                <td><span class="w-2 h-2 bg-[var(--ink)] inline-block"></span></td>
+                <td><span class="w-2 h-2 bg-[var(--ink)] inline-block"></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="font-mono text-[10px] text-[var(--mute)] mt-3">■ Completed · ◧ In Progress · □ Not Started</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="font-mono text-[10px] text-[var(--mute)] tracking-widest py-6">STUDIO OS · INTERNAL PROJECT MANAGEMENT SYSTEM · SCALE: NTS</footer>
+
+  </div>
+</main>
+
+<script>
+const data = [
+  {no:"PRJ-2031",client:"Lusail Real Estate",stage:5,status:"active",eng:"K. Fares",variance:"+2d"},
+  {no:"PRJ-2044",client:"Al Waha Development",stage:2,status:"active",eng:"R. Nabil",variance:"−1d"},
+  {no:"PRJ-1988",client:"Barwa Residential",stage:7,status:"mod",eng:"Fehmi",variance:"On plan"},
+  {no:"PRJ-1998",client:"Barwa Office Park",stage:6,status:"active",eng:"Shaban",variance:"−3d"},
+  {no:"PRJ-2010",client:"Al Rayyan Holdings",stage:4,status:"active",eng:"Mona K.",variance:"+5d"},
+  {no:"PRJ-1940",client:"Msheireb Downtown",stage:7,status:"closed",eng:"—",variance:"Closed"},
+  {no:"PRJ-2052",client:"Lusail Real Estate",stage:1,status:"active",eng:"K. Fares",variance:"On plan"},
+  {no:"PRJ-1975",client:"Al Waha Development",stage:7,status:"closed",eng:"—",variance:"Closed"}
+];
+
+function stageStrip(stage){
+  let s = '<div class="flex gap-[3px]">';
+  for(let i=1;i<=7;i++){
+    if(i < stage) s += '<div class="stage-cell stage-fill"></div>';
+    else if(i === stage) s += '<div class="stage-cell stage-half"></div>';
+    else s += '<div class="stage-cell"></div>';
+  }
+  s += '</div>';
+  return s;
+}
+
+function statusBadge(status){
+  const map = {
+    active:['ACTIVE','border border-[var(--ink)]'],
+    closed:['CLOSED','bg-[var(--ink)] text-[var(--paper)]'],
+    mod:['UNDER MOD.','hatch text-[var(--paper)]']
+  };
+  const [label,cls] = map[status];
+  return '<span class="px-2 py-0.5 text-[10px] '+cls+'">'+label+'</span>';
+}
+
+function renderRows(filter){
+  const rows = data.filter(d => filter==='all' ? true : d.status===filter);
+  document.getElementById('rowCount').textContent = rows.length;
+  document.getElementById('projectRows').innerHTML = rows.map(d => (
+    '<tr class="border-t border-[var(--line)] hover:bg-black/[.03]">' +
+    '<td class="px-6 py-3">'+d.no+'</td>' +
+    '<td class="px-2 py-3">'+d.client+'</td>' +
+    '<td class="px-2 py-3">'+stageStrip(d.stage)+'</td>' +
+    '<td class="px-2 py-3">'+statusBadge(d.status)+'</td>' +
+    '<td class="px-2 py-3">'+d.eng+'</td>' +
+    '<td class="px-6 py-3 text-right">'+d.variance+'</td>' +
+    '</tr>'
+  )).join('');
+}
+renderRows('all');
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>{
+      b.classList.remove('bg-[var(--ink)]','text-[var(--paper)]','border-[var(--ink)]');
+      b.classList.add('border-[var(--line)]','text-[var(--mute)]');
+    });
+    btn.classList.add('bg-[var(--ink)]','text-[var(--paper)]','border-[var(--ink)]');
+    btn.classList.remove('border-[var(--line)]','text-[var(--mute)]');
+    renderRows(btn.dataset.f);
+  });
+});
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+function tick(){
+  const d = new Date();
+  document.getElementById('clock').textContent = d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-GB');
+}
+tick();
+setInterval(tick,1000);
+</script>
+
+</body>
+</html>

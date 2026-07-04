@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 :root{
   --paper:#F5F5F1;
@@ -37,7 +38,6 @@ body{font-family:'Inter',sans-serif;}
 .sidebar-link{border-left:2px solid transparent;}
 .sidebar-link.active{border-left:2px solid #F5F5F1;background:rgba(245,245,241,.06);}
 .sidebar-link:hover{background:rgba(245,245,241,.05);}
-.hatch{background-image:repeating-linear-gradient(45deg,#101010 0 1px,transparent 1px 6px);opacity:.5;}
 input::placeholder,textarea::placeholder{color:#9a9a93;}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23101010' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;-webkit-appearance:none;appearance:none;}
 .upload-box{border:1.5px dashed var(--line);background:var(--panel);transition:border-color .15s ease;}
@@ -55,6 +55,16 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .badge{font-size:9px;font-weight:700;letter-spacing:.08em;padding:3px 7px;white-space:nowrap;}
 .progress-track{background:var(--panel);border:1px solid var(--line);height:8px;}
 .progress-fill{background:var(--ink);height:100%;}
+.tab-btn{border-bottom:2px solid transparent;color:var(--mute);cursor:pointer;transition:all .12s ease;}
+.tab-btn.active{color:var(--ink);border-bottom:2px solid var(--ink);}
+.tab-btn:hover{color:var(--ink);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.acc-head{cursor:pointer;}
+.acc-body{display:none;}
+.acc-body.open{display:block;}
+.acc-chevron{transition:transform .15s ease;}
+.acc-chevron.open{transform:rotate(180deg);}
 @media (max-width:1024px){
   #sidebar{position:fixed;left:-280px;top:0;height:100%;z-index:60;transition:left .35s ease;}
   #sidebar.open{left:0;}
@@ -75,51 +85,51 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <nav class="mt-4 flex flex-col font-mono text-[13px] h-[calc(100vh-200px)] overflow-y-auto scrollbar-none">
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="index.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <i class="fa-solid fa-table-cells-large w-4 text-center"></i>
         Dashboard
       </a>
       <a class="sidebar-link active flex items-center gap-3 px-6 py-3" href="projects.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18"/></svg>
+        <i class="fa-solid fa-diagram-project w-4 text-center"></i>
         Projects
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="architectural.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+        <i class="fa-solid fa-building-columns w-4 text-center"></i>
         Architectural
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="electrical.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <i class="fa-solid fa-bolt w-4 text-center"></i>
         Electrical
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="mechanical.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <i class="fa-solid fa-gear w-4 text-center"></i>
         Mechanical
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="all-tasks.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <i class="fa-solid fa-list-check w-4 text-center"></i>
         All Tasks
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="design-team.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <i class="fa-solid fa-people-group w-4 text-center"></i>
         Design Team
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="finance.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <i class="fa-solid fa-sack-dollar w-4 text-center"></i>
         Finance
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="audit-log.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <i class="fa-solid fa-clock-rotate-left w-4 text-center"></i>
         Audit Log
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="supervision-engineers.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <i class="fa-solid fa-helmet-safety w-4 text-center"></i>
         Supervision Engineers
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="staff.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <i class="fa-solid fa-user-group w-4 text-center"></i>
         Staff
       </a>
       <a class="sidebar-link flex items-center gap-3 px-6 py-3 opacity-70" href="clients.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.7-3.2 3.2-5 6.5-5s5.8 1.8 6.5 5"/><circle cx="18" cy="8" r="2.4"/><path d="M16.3 12.2c2.3.4 3.9 1.9 4.4 4.1"/></svg>
+        <i class="fa-solid fa-address-book w-4 text-center"></i>
         Clients
       </a>
     </nav>
@@ -138,10 +148,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <header class="sticky top-0 z-40 bg-[var(--paper)]/90 backdrop-blur border-b border-[var(--line)] px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
     <div class="flex items-center gap-4 min-w-0">
       <button onclick="toggleSidebar()" class="lg:hidden shrink-0 border border-[var(--line)] w-9 h-9 flex items-center justify-center">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <i class="fa-solid fa-bars"></i>
       </button>
       <a href="projects.html" class="shrink-0 border border-[var(--line)] w-9 h-9 flex items-center justify-center hover:border-[var(--ink)] transition-colors">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        <i class="fa-solid fa-arrow-left"></i>
       </a>
       <div class="min-w-0">
         <h1 class="font-display font-700 text-2xl leading-none truncate">PRJ-2053</h1>
@@ -150,186 +160,236 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="flex items-center gap-2 shrink-0">
       <button onclick="pushChange('Project header edited')" class="font-mono text-xs border border-[var(--line)] px-4 py-2 hover:border-[var(--ink)] transition-colors flex items-center gap-2">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <i class="fa-solid fa-pen"></i>
         Edit
       </button>
       <button onclick="window.print()" class="font-mono text-xs border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors flex items-center gap-2">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <i class="fa-solid fa-print"></i>
         Print
       </button>
     </div>
   </header>
 
-  <div class="px-6 lg:px-10 py-8 space-y-6 max-w-6xl mx-auto">
-
+  <div class="px-6 lg:px-10 pt-6 max-w-6xl mx-auto">
     <div class="card p-6">
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div class="font-mono text-[10px] tracking-[.2em] text-[var(--mute)]">OWNER</div>
           <h2 class="font-display font-700 text-2xl mt-1">KHALIL IBRAHIM AL-ZIYARA</h2>
           <div class="font-mono text-[11px] text-[var(--mute)] mt-2 flex flex-wrap gap-x-4 gap-y-1">
-            <span>APP NO: <span class="text-[var(--ink)]">N/A</span></span>
-            <span>PIN: <span class="text-[var(--ink)]">45030179</span></span>
-            <span>DATE: <span class="text-[var(--ink)]">2026-03</span></span>
+            <span><i class="fa-regular fa-file-lines mr-1"></i>APP NO: <span class="text-[var(--ink)]">N/A</span></span>
+            <span><i class="fa-solid fa-hashtag mr-1"></i>PIN: <span class="text-[var(--ink)]">45030179</span></span>
+            <span><i class="fa-regular fa-calendar mr-1"></i>DATE: <span class="text-[var(--ink)]">2026-03</span></span>
           </div>
         </div>
         <div class="text-right">
           <span id="statusBadge" class="badge bg-[#FFF3CD] text-[#7B3F00] inline-block">PENDING</span>
-          <div class="font-mono text-[11px] text-[var(--mute)] mt-2">Old Airport · 2026</div>
+          <div class="font-mono text-[11px] text-[var(--mute)] mt-2"><i class="fa-solid fa-location-dot mr-1"></i>Old Airport · 2026</div>
           <div class="font-display font-600 text-lg mt-1">Compound Villa</div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="card p-4">
-        <div class="field-label mb-2">📷 Perspective Shot</div>
-        <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadPerspective">
-          <span class="text-xl">📷</span>
-          <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
-          <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
-          <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event,'uploadPerspective','Perspective Shot')">
-        </label>
+  <div class="px-6 lg:px-10 pt-6 max-w-6xl mx-auto sticky top-[73px] z-30 bg-[var(--paper)]/95 backdrop-blur">
+    <div class="flex gap-6 font-mono text-[12px] overflow-x-auto scrollbar-none border-b border-[var(--line)]" id="tabBar">
+      <div class="tab-btn active flex items-center gap-2 pb-3 whitespace-nowrap" data-tab="overview" onclick="setTab('overview')">
+        <i class="fa-solid fa-house"></i> Overview
       </div>
-      <div class="card p-4">
-        <div class="field-label mb-2">🗺️ Site Plan</div>
-        <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadSitePlan">
-          <span class="text-xl">🗺️</span>
-          <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
-          <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
-          <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event,'uploadSitePlan','Site Plan')">
-        </label>
+      <div class="tab-btn flex items-center gap-2 pb-3 whitespace-nowrap" data-tab="tasks" onclick="setTab('tasks')">
+        <i class="fa-solid fa-list-check"></i> Tasks &amp; Notes
       </div>
-      <div class="card p-4">
-        <div class="field-label mb-2">📄 Building Permit</div>
-        <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadPermit">
-          <span class="text-xl">📄</span>
-          <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
-          <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
-          <input type="file" accept="image/*,application/pdf" class="hidden" onchange="handleImageUpload(event,'uploadPermit','Building Permit')">
-        </label>
+      <div class="tab-btn flex items-center gap-2 pb-3 whitespace-nowrap" data-tab="lifecycle" onclick="setTab('lifecycle')">
+        <i class="fa-solid fa-timeline"></i> Lifecycle
+      </div>
+      <div class="tab-btn flex items-center gap-2 pb-3 whitespace-nowrap" data-tab="approvals" onclick="setTab('approvals')">
+        <i class="fa-solid fa-stamp"></i> Approvals
+      </div>
+      <div class="tab-btn flex items-center gap-2 pb-3 whitespace-nowrap" data-tab="finance" onclick="setTab('finance')">
+        <i class="fa-solid fa-sack-dollar"></i> Finance
+      </div>
+      <div class="tab-btn flex items-center gap-2 pb-3 whitespace-nowrap" data-tab="files" onclick="setTab('files')">
+        <i class="fa-solid fa-folder-open"></i> Files &amp; Log
       </div>
     </div>
+  </div>
 
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">PROJECT INFORMATION</div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5 font-mono text-[12px]" id="infoGrid"></div>
-    </div>
+  <div class="px-6 lg:px-10 py-6 space-y-6 max-w-6xl mx-auto">
 
-    <div class="card p-6">
-      <div class="flex items-center justify-between mb-4">
-        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]">PENDING TASKS</div>
-        <button onclick="openTaskModal()" class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors">+ Add Task</button>
-      </div>
-      <div id="taskList" class="space-y-3"></div>
-    </div>
-
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4" id="notesHeader">📝 PROJECT NOTES LOG (0)</div>
-      <div class="flex gap-2 mb-4">
-        <input id="noteInput" type="text" placeholder="Add a remark, decision, or follow-up... use @Name to mention" class="flex-1 font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
-        <button onclick="addNote()" class="font-mono text-[11px] border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors whitespace-nowrap">+ Add Note</button>
-      </div>
-      <div id="notesList" class="space-y-2"></div>
-    </div>
-
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">📊 PROJECT LIFECYCLE STAGE</div>
-      <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Click any stage to mark/unmark it independently</div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2" id="stageList"></div>
-      <div class="mt-4 progress-track"><div class="progress-fill" id="stageProgressFill" style="width:0%"></div></div>
-      <div class="font-mono text-[10px] text-[var(--mute)] mt-2" id="stageProgressLabel">0 / 7 stages complete</div>
-    </div>
-
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">📅 PLANNED DESIGN TIMELINE</div>
-      <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Will appear automatically once the down payment is recorded, or set start manually below. Villa estimate: 2 months.</div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <div class="field-label mb-1">Manual start date</div>
-          <input id="manualStart" type="date" onchange="updateTimeline()" class="w-full font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
-        </div>
-        <div>
-          <div class="field-label mb-1">Planned end date</div>
-          <div id="plannedEnd" class="font-mono text-xs border border-[var(--line)] px-3 py-2 bg-[var(--panel)]">—</div>
-        </div>
-        <div>
-          <div class="field-label mb-2">Project priority</div>
-          <div class="flex gap-2 font-mono text-[11px]" id="priorityChips"></div>
-        </div>
-      </div>
-      <div class="divider mt-5 pt-5">
-        <button id="verifyBtn" onclick="toggleVerify()" class="font-mono text-[11px] border border-[var(--line)] px-4 py-2 hover:border-[var(--ink)] transition-colors">⬜ Not Verified — Click to Verify Project</button>
-      </div>
-    </div>
-
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">🎯 SCOPE OF WORK — Click to toggle</div>
-      <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="scopeChips"></div>
-    </div>
-
-    <div class="card p-6">
-      <div class="flex items-center justify-between mb-1">
-        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]">DC1 COORDINATION</div>
-        <span class="font-mono text-[10px] text-[var(--mute)]">Last step before DC2 services submission</span>
-      </div>
-      <div class="divider my-3"></div>
-      <div class="font-mono text-[12px] mb-4">DC1 — Design Approval</div>
-      <div id="dc1Groups" class="space-y-5"></div>
-    </div>
-
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">DC2 — SERVICES</div>
-      <div id="dc2Groups" class="space-y-5"></div>
-    </div>
-
-    <div class="card p-6 space-y-5">
-      <div>
-        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">📐 STRUCTURAL DRAWINGS</div>
-        <div class="font-mono text-[10px] text-[var(--mute)] mb-3">Must be verified before IFC can proceed</div>
-        <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="structuralChips"></div>
-      </div>
-      <div class="divider pt-5">
-        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">IFC PACKAGE — CLOSING STAGE</div>
-        <div class="font-mono text-[10px] text-[var(--mute)] mb-3">Issued for Construction — final deliverable, unlocks once Structural is Verified</div>
-        <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="ifcChips"></div>
-      </div>
-    </div>
-
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1">💰 SCOPE OF WORK &amp; PAYMENT TERMS</div>
-      <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Standard: 40% Down · 40% DC1 · 20% DC2</div>
-      <div class="mb-5">
-        <div class="field-label mb-1">ICON Design Fee (QAR)</div>
-        <input id="feeInput" type="number" placeholder="Enter ICON design fee to calculate invoice amounts" oninput="renderInvoices()" class="w-full md:w-64 font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
-      </div>
-      <div id="invoiceList" class="space-y-3"></div>
-      <button onclick="addInvoiceLine()" class="mt-4 font-mono text-[11px] border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors">+ Add Invoice Line</button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]" id="attachHeader">📎 PROJECT ATTACHMENTS (0)</div>
-          <label class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors cursor-pointer">
-            + Attach Document
-            <input type="file" class="hidden" onchange="addAttachment(event)">
+    <div class="tab-panel active" id="panel-overview">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="card p-4">
+          <div class="field-label mb-2"><i class="fa-solid fa-camera mr-1"></i>Perspective Shot</div>
+          <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadPerspective">
+            <i class="fa-solid fa-camera text-xl text-[var(--mute)]"></i>
+            <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
+            <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
+            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event,'uploadPerspective','Perspective Shot')">
           </label>
         </div>
-        <div id="attachList" class="space-y-2 font-mono text-[11px]"></div>
-      </div>
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]" id="commentsHeader">MUNICIPALITY COMMENTS (0)</div>
-          <button onclick="addComment()" class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors">+ Add</button>
+        <div class="card p-4">
+          <div class="field-label mb-2"><i class="fa-solid fa-map mr-1"></i>Site Plan</div>
+          <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadSitePlan">
+            <i class="fa-solid fa-map text-xl text-[var(--mute)]"></i>
+            <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
+            <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
+            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event,'uploadSitePlan','Site Plan')">
+          </label>
         </div>
-        <div id="commentsList" class="space-y-2 font-mono text-[11px]"></div>
+        <div class="card p-4">
+          <div class="field-label mb-2"><i class="fa-solid fa-file-contract mr-1"></i>Building Permit</div>
+          <label class="upload-box h-32 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden" id="uploadPermit">
+            <i class="fa-solid fa-file-contract text-xl text-[var(--mute)]"></i>
+            <span class="font-mono text-[10px] text-[var(--mute)]">Click to upload</span>
+            <span class="font-mono text-[9px] text-[var(--mute)]">Embeds into the file</span>
+            <input type="file" accept="image/*,application/pdf" class="hidden" onchange="handleImageUpload(event,'uploadPermit','Building Permit')">
+          </label>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4"><i class="fa-solid fa-circle-info mr-1"></i>PROJECT INFORMATION</div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5 font-mono text-[12px]" id="infoGrid"></div>
       </div>
     </div>
 
-    <div class="card p-6">
-      <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4">RECENT CHANGES (THIS PROJECT)</div>
-      <div id="changesList" class="space-y-2 font-mono text-[11px]"></div>
+    <div class="tab-panel" id="panel-tasks">
+      <div class="card p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]"><i class="fa-solid fa-list-check mr-1"></i>PENDING TASKS</div>
+          <button onclick="openTaskModal()" class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> Add Task
+          </button>
+        </div>
+        <div id="taskList" class="space-y-3"></div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4" id="notesHeader"><i class="fa-solid fa-note-sticky mr-1"></i>PROJECT NOTES LOG (0)</div>
+        <div class="flex gap-2 mb-4">
+          <input id="noteInput" type="text" placeholder="Add a remark, decision, or follow-up... use @Name to mention" class="flex-1 font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+          <button onclick="addNote()" class="font-mono text-[11px] border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors whitespace-nowrap flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> Add Note
+          </button>
+        </div>
+        <div id="notesList" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-lifecycle">
+      <div class="card p-6 mb-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1"><i class="fa-solid fa-timeline mr-1"></i>PROJECT LIFECYCLE STAGE</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Click any stage to mark/unmark it independently</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2" id="stageList"></div>
+        <div class="mt-4 progress-track"><div class="progress-fill" id="stageProgressFill" style="width:0%"></div></div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mt-2" id="stageProgressLabel">0 / 7 stages complete</div>
+      </div>
+
+      <div class="card p-6 mb-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4"><i class="fa-regular fa-calendar-days mr-1"></i>PLANNED DESIGN TIMELINE</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Will appear automatically once the down payment is recorded, or set start manually below. Villa estimate: 2 months.</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <div class="field-label mb-1">Manual start date</div>
+            <input id="manualStart" type="date" onchange="updateTimeline()" class="w-full font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+          </div>
+          <div>
+            <div class="field-label mb-1">Planned end date</div>
+            <div id="plannedEnd" class="font-mono text-xs border border-[var(--line)] px-3 py-2 bg-[var(--panel)]">—</div>
+          </div>
+          <div>
+            <div class="field-label mb-2">Project priority</div>
+            <div class="flex gap-2 font-mono text-[11px]" id="priorityChips"></div>
+          </div>
+        </div>
+        <div class="divider mt-5 pt-5">
+          <button id="verifyBtn" onclick="toggleVerify()" class="font-mono text-[11px] border border-[var(--line)] px-4 py-2 hover:border-[var(--ink)] transition-colors flex items-center gap-2">
+            <i class="fa-regular fa-square" id="verifyIcon"></i><span id="verifyText"> Not Verified — Click to Verify Project</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4"><i class="fa-solid fa-bullseye mr-1"></i>SCOPE OF WORK — Click to toggle</div>
+        <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="scopeChips"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-approvals">
+      <div class="card p-6 mb-6">
+        <div class="flex items-center justify-between mb-1">
+          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]"><i class="fa-solid fa-stamp mr-1"></i>DC1 COORDINATION</div>
+          <span class="font-mono text-[10px] text-[var(--mute)]">Last step before DC2 services submission</span>
+        </div>
+        <div class="divider my-3"></div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="font-mono text-[12px]">DC1 — Design Approval</div>
+          <div class="font-mono text-[10px] text-[var(--mute)]">Overall progress: <span id="dc1ProgressLabel">0%</span></div>
+        </div>
+        <div id="dc1Groups" class="space-y-2"></div>
+      </div>
+
+      <div class="card p-6 mb-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4"><i class="fa-solid fa-stamp mr-1"></i>DC2 — SERVICES</div>
+        <div id="dc2Groups" class="space-y-2"></div>
+      </div>
+
+      <div class="card p-6 space-y-5">
+        <div>
+          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1"><i class="fa-solid fa-drafting-compass mr-1"></i>STRUCTURAL DRAWINGS</div>
+          <div class="font-mono text-[10px] text-[var(--mute)] mb-3">Must be verified before IFC can proceed</div>
+          <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="structuralChips"></div>
+        </div>
+        <div class="divider pt-5">
+          <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1"><i class="fa-solid fa-file-circle-check mr-1"></i>IFC PACKAGE — CLOSING STAGE</div>
+          <div class="font-mono text-[10px] text-[var(--mute)] mb-3">Issued for Construction — final deliverable, unlocks once Structural is Verified</div>
+          <div class="flex flex-wrap gap-2 font-mono text-[11px]" id="ifcChips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-finance">
+      <div class="card p-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-1"><i class="fa-solid fa-sack-dollar mr-1"></i>SCOPE OF WORK &amp; PAYMENT TERMS</div>
+        <div class="font-mono text-[10px] text-[var(--mute)] mb-4">Standard: 40% Down · 40% DC1 · 20% DC2</div>
+        <div class="mb-5">
+          <div class="field-label mb-1">ICON Design Fee (QAR)</div>
+          <input id="feeInput" type="number" placeholder="Enter ICON design fee to calculate invoice amounts" oninput="renderInvoices()" class="w-full md:w-64 font-mono text-xs border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--ink)] bg-[var(--paper)]">
+        </div>
+        <div id="invoiceList" class="space-y-3"></div>
+        <button onclick="addInvoiceLine()" class="mt-4 font-mono text-[11px] border border-[var(--ink)] px-4 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-plus"></i> Add Invoice Line
+        </button>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-files">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]" id="attachHeader"><i class="fa-solid fa-paperclip mr-1"></i>PROJECT ATTACHMENTS (0)</div>
+            <label class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors cursor-pointer flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Attach
+              <input type="file" class="hidden" onchange="addAttachment(event)">
+            </label>
+          </div>
+          <div id="attachList" class="space-y-2 font-mono text-[11px]"></div>
+        </div>
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)]" id="commentsHeader"><i class="fa-solid fa-comment-dots mr-1"></i>MUNICIPALITY COMMENTS (0)</div>
+            <button onclick="addComment()" class="font-mono text-[11px] border border-[var(--ink)] px-3 py-1.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Add
+            </button>
+          </div>
+          <div id="commentsList" class="space-y-2 font-mono text-[11px]"></div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-[11px] tracking-[.15em] text-[var(--mute)] mb-4"><i class="fa-solid fa-clock-rotate-left mr-1"></i>RECENT CHANGES (THIS PROJECT)</div>
+        <div id="changesList" class="space-y-2 font-mono text-[11px]"></div>
+      </div>
     </div>
 
   </div>
@@ -338,8 +398,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div class="modal-overlay" id="taskModal">
   <div class="modal-box p-6">
     <div class="flex items-center justify-between mb-5">
-      <div class="font-display font-700 text-lg">New Task</div>
-      <button onclick="closeTaskModal()" class="w-8 h-8 border border-[var(--line)] flex items-center justify-center hover:border-[var(--ink)]">✕</button>
+      <div class="font-display font-700 text-lg"><i class="fa-solid fa-list-check mr-2"></i>New Task</div>
+      <button onclick="closeTaskModal()" class="w-8 h-8 border border-[var(--line)] flex items-center justify-center hover:border-[var(--ink)]"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="space-y-4 font-mono text-xs">
       <div>
@@ -414,7 +474,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="flex gap-2 mt-6">
       <button onclick="closeTaskModal()" class="flex-1 font-mono text-xs border border-[var(--line)] px-4 py-2.5 hover:border-[var(--ink)] transition-colors">Cancel</button>
-      <button onclick="saveTask()" class="flex-1 font-mono text-xs border border-[var(--ink)] px-4 py-2.5 bg-[var(--ink)] text-[var(--paper)] hover:opacity-85 transition-opacity">Assign Task</button>
+      <button onclick="saveTask()" class="flex-1 font-mono text-xs border border-[var(--ink)] px-4 py-2.5 bg-[var(--ink)] text-[var(--paper)] hover:opacity-85 transition-opacity flex items-center justify-center gap-2">
+        <i class="fa-solid fa-paper-plane"></i> Assign Task
+      </button>
     </div>
   </div>
 </div>
@@ -438,9 +500,7 @@ const statusColors = {
   "In Progress":"bg-[#DCEBFB] text-[#1B4F72]",
   "Under Review":"bg-[#FFF3CD] text-[#7B3F00]",
   "Verified":"bg-[#D5F5E3] text-[#145A32]",
-  "Uncompleted":"bg-[#FFE4E4] text-[#8B0000]",
   "Completed":"bg-[#D5F5E3] text-[#145A32]",
-  "Approved Task":"bg-[#D5F5E3] text-[#145A32]",
   "On Going":"bg-[#DCEBFB] text-[#1B4F72]"
 };
 
@@ -454,13 +514,13 @@ const project = {
   tasks:[],
   notes:[],
   stages:[
-    {name:"RFQ",icon:"📋",done:true},
-    {name:"Contract Submitted",icon:"📝",done:true},
-    {name:"Contract Signed",icon:"✅",done:true},
-    {name:"Design",icon:"📐",done:true},
-    {name:"Tendering",icon:"📊",done:false},
-    {name:"Supervision",icon:"🏗️",done:false},
-    {name:"Closed",icon:"🔒",done:false}
+    {name:"RFQ",icon:"fa-file-invoice",done:true},
+    {name:"Contract Submitted",icon:"fa-paper-plane",done:true},
+    {name:"Contract Signed",icon:"fa-file-signature",done:true},
+    {name:"Design",icon:"fa-compass-drafting",done:true},
+    {name:"Tendering",icon:"fa-gavel",done:false},
+    {name:"Supervision",icon:"fa-helmet-safety",done:false},
+    {name:"Closed",icon:"fa-lock",done:false}
   ],
   priority:"None",
   verified:false,
@@ -472,14 +532,14 @@ const project = {
     {name:"Supervision",done:false}
   ],
   dc1: [
-    {dept:"Architectural",icon:"🏛",items:["Architecture (AR)","Roads (Ashghal)","MOTC DC1","Civil Aviation (CAV)","Qatar Rail DC1","Infrastructure Planning","Urban Planning","Higher Education (MOEHE)","Technical Affairs (Private Eng Office)","Ministry of Environment & Climate Change (MECC)","Ministry of Industry & Mineral Resources (MIM)","Qatar Tourism (TOUR)","Public Health (MOPH)","General Cleanliness Project","Livestock Department"]},
-    {dept:"Electrical",icon:"⚡",items:["KAHRAMAA EL"]},
-    {dept:"Mechanical",icon:"⚙",items:["Life Safety Plan (LSP)","KAHRAMAA WS","Ashghal Drainage","Lusail Drainage"]}
+    {dept:"Architectural",icon:"fa-building-columns",items:["Architecture (AR)","Roads (Ashghal)","MOTC DC1","Civil Aviation (CAV)","Qatar Rail DC1","Infrastructure Planning","Urban Planning","Higher Education (MOEHE)","Technical Affairs (Private Eng Office)","Ministry of Environment & Climate Change (MECC)","Ministry of Industry & Mineral Resources (MIM)","Qatar Tourism (TOUR)","Public Health (MOPH)","General Cleanliness Project","Livestock Department"]},
+    {dept:"Electrical",icon:"fa-bolt",items:["KAHRAMAA EL"]},
+    {dept:"Mechanical",icon:"fa-gear",items:["Life Safety Plan (LSP)","KAHRAMAA WS","Ashghal Drainage","Lusail Drainage"]}
   ],
   dc2: [
-    {dept:"Architectural Services",icon:"🏛",items:["Qatar Rail DC2","MOTC DC2"]},
-    {dept:"Electrical Services",icon:"⚡",items:["KAHRAMAA EL","Telecom (Ooredoo)","Fire Alarm (MOI)","CCTV / Security (Client Specialist)"]},
-    {dept:"Mechanical Services",icon:"⚙",items:["KAHRAMAA WS","Ashghal Drainage","Fire Fighting (MOI)","Ventilation (MOI)","Marafiq Lusail — Air Conditioning","Marafiq Lusail — Gas Supply"]}
+    {dept:"Architectural Services",icon:"fa-building-columns",items:["Qatar Rail DC2","MOTC DC2"]},
+    {dept:"Electrical Services",icon:"fa-bolt",items:["KAHRAMAA EL","Telecom (Ooredoo)","Fire Alarm (MOI)","CCTV / Security (Client Specialist)"]},
+    {dept:"Mechanical Services",icon:"fa-gear",items:["KAHRAMAA WS","Ashghal Drainage","Fire Fighting (MOI)","Ventilation (MOI)","Marafiq Lusail — Air Conditioning","Marafiq Lusail — Gas Supply"]}
   ],
   dc1Status:{},
   dc2Status:{},
@@ -495,6 +555,13 @@ const project = {
   comments:[],
   changes:[]
 };
+
+const openGroups = {};
+
+function setTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+}
 
 function pushChange(text){
   const now = new Date();
@@ -535,7 +602,7 @@ function statusBadgeHTML(status){
 function renderTasks(){
   const el = document.getElementById('taskList');
   if(project.tasks.length === 0){
-    el.innerHTML = '<div class="font-mono text-[11px] text-[var(--mute)]">✓ No pending tasks</div>';
+    el.innerHTML = '<div class="font-mono text-[11px] text-[var(--mute)] flex items-center gap-2"><i class="fa-solid fa-circle-check"></i>No pending tasks</div>';
     return;
   }
   el.innerHTML = project.tasks.map((t,i) => `
@@ -547,8 +614,8 @@ function renderTasks(){
       </div>
       <div class="flex items-center gap-2">
         ${statusBadgeHTML(t.status)}
-        <button onclick="cycleTaskStatus(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 hover:border-[var(--ink)]">Advance</button>
-        <button onclick="removeTask(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 hover:border-[var(--ink)]">Remove</button>
+        <button onclick="cycleTaskStatus(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 hover:border-[var(--ink)]"><i class="fa-solid fa-forward"></i></button>
+        <button onclick="removeTask(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 hover:border-[var(--ink)]"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>
   `).join('');
@@ -627,7 +694,7 @@ function addNote(){
   renderNotes();
 }
 function renderNotes(){
-  document.getElementById('notesHeader').textContent = '📝 PROJECT NOTES LOG (' + project.notes.length + ')';
+  document.getElementById('notesHeader').innerHTML = '<i class="fa-solid fa-note-sticky mr-1"></i>PROJECT NOTES LOG (' + project.notes.length + ')';
   const el = document.getElementById('notesList');
   if(project.notes.length === 0){
     el.innerHTML = '<div class="font-mono text-[11px] text-[var(--mute)]">No notes yet. Add one above to track project remarks, decisions, or follow-ups.</div>';
@@ -645,7 +712,7 @@ function renderStages(){
   const el = document.getElementById('stageList');
   el.innerHTML = project.stages.map((s,i) => `
     <div onclick="toggleStage(${i})" class="stagepill ${s.done ? 'done' : ''} px-3 py-3 text-center font-mono text-[10px]">
-      <div class="text-lg leading-none mb-1">${s.icon}</div>
+      <div class="text-lg leading-none mb-1"><i class="fa-solid ${s.icon}"></i></div>
       ${s.name}
     </div>
   `).join('');
@@ -671,9 +738,9 @@ function updateTimeline(){
 
 function renderPriorityChips(){
   const options = ["None","High","Medium","Low"];
-  const labels = {"None":"None","High":"🔴 High","Medium":"🟡 Medium","Low":"🟢 Low"};
+  const icons = {"None":'<i class="fa-regular fa-flag mr-1"></i>None',"High":'<i class="fa-solid fa-flag mr-1 text-red-600"></i>High',"Medium":'<i class="fa-solid fa-flag mr-1 text-yellow-600"></i>Medium',"Low":'<i class="fa-solid fa-flag mr-1 text-green-600"></i>Low'};
   const el = document.getElementById('priorityChips');
-  el.innerHTML = options.map(o => `<div onclick="setPriority('${o}')" class="chip ${project.priority===o?'on':''} px-3 py-1.5">${labels[o]}</div>`).join('');
+  el.innerHTML = options.map(o => `<div onclick="setPriority('${o}')" class="chip ${project.priority===o?'on':''} px-3 py-1.5">${icons[o]}</div>`).join('');
 }
 function setPriority(p){
   project.priority = p;
@@ -688,18 +755,22 @@ function toggleVerify(){
 }
 function renderVerify(){
   const btn = document.getElementById('verifyBtn');
+  const icon = document.getElementById('verifyIcon');
+  const text = document.getElementById('verifyText');
   if(project.verified){
-    btn.textContent = '✅ Verified — Click to Unverify';
+    text.textContent = ' Verified — Click to Unverify';
+    icon.className = 'fa-solid fa-square-check';
     btn.classList.add('bg-[var(--ink)]','text-[var(--paper)]');
   } else {
-    btn.textContent = '⬜ Not Verified — Click to Verify Project';
+    text.textContent = ' Not Verified — Click to Verify Project';
+    icon.className = 'fa-regular fa-square';
     btn.classList.remove('bg-[var(--ink)]','text-[var(--paper)]');
   }
 }
 
 function renderScope(){
   const el = document.getElementById('scopeChips');
-  el.innerHTML = project.scope.map((s,i) => `<div onclick="toggleScope(${i})" class="chip ${s.done?'on':''} px-3 py-1.5">${s.done?'✓ ':''}${s.name}</div>`).join('');
+  el.innerHTML = project.scope.map((s,i) => `<div onclick="toggleScope(${i})" class="chip ${s.done?'on':''} px-3 py-1.5 flex items-center gap-1.5"><i class="fa-solid ${s.done?'fa-square-check':'fa-square'}"></i>${s.name}</div>`).join('');
 }
 function toggleScope(i){
   project.scope[i].done = !project.scope[i].done;
@@ -710,26 +781,39 @@ function toggleScope(i){
 const dc1DcOptions = ["Not Set","Approved","Under Study","Comment","Uncharted","N/A"];
 const drawingOptions = ["Not Set","Not Started","In Progress","Under Review","Verified"];
 
-function renderDcGroups(groups, statusMap, containerId, tagLabel, prefix){
+function renderDcGroups(groups, statusMap, containerId, prefix){
   const el = document.getElementById(containerId);
-  el.innerHTML = groups.map(g => `
-    <div>
-      <div class="font-mono text-[11px] font-bold mb-2">${g.icon} ${g.dept}</div>
-      <div class="space-y-1.5">
+  el.innerHTML = groups.map((g,gi) => {
+    const groupKey = containerId + '_' + gi;
+    const isOpen = openGroups[groupKey];
+    return `
+    <div class="border border-[var(--line)]">
+      <div class="acc-head flex items-center justify-between px-4 py-3" onclick="toggleGroup('${groupKey}')">
+        <div class="font-mono text-[11px] font-bold flex items-center gap-2"><i class="fa-solid ${g.icon}"></i>${g.dept}<span class="font-normal text-[var(--mute)]">(${g.items.length})</span></div>
+        <i class="fa-solid fa-chevron-down acc-chevron ${isOpen ? 'open' : ''}"></i>
+      </div>
+      <div class="acc-body ${isOpen ? 'open' : ''} px-4 pb-3 space-y-1.5" id="${groupKey}">
         ${g.items.map(item => {
           const key = prefix + '_' + g.dept + '_' + item;
           const status = statusMap[key] || "Not Set";
           return `
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--line)] pb-1.5">
-            <div class="font-mono text-[11px]">${item} <span class="text-[var(--mute)] text-[9px]">${tagLabel}</span></div>
+          <div class="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--line)] pt-1.5">
+            <div class="font-mono text-[11px]">${item}</div>
             <select onchange="setDcStatus('${containerId}','${key}',this.value)" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1 bg-[var(--paper)] outline-none focus:border-[var(--ink)]">
               ${dc1DcOptions.map(o => `<option value="${o}" ${o===status?'selected':''}>${o}</option>`).join('')}
             </select>
           </div>`;
         }).join('')}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+function toggleGroup(key){
+  openGroups[key] = !openGroups[key];
+  const body = document.getElementById(key);
+  body.classList.toggle('open', openGroups[key]);
+  const chevron = body.previousElementSibling.querySelector('.acc-chevron');
+  chevron.classList.toggle('open', openGroups[key]);
 }
 
 function setDcStatus(containerId, key, value){
@@ -745,6 +829,7 @@ function recalcDc1Progress(){
   project.dc1.forEach(g => g.items.forEach(item => allKeys.push('dc1_' + g.dept + '_' + item)));
   const approved = allKeys.filter(k => project.dc1Status[k] === 'Approved' || project.dc1Status[k] === 'N/A').length;
   project.dc1Progress = allKeys.length ? Math.round(approved / allKeys.length * 100) : 0;
+  document.getElementById('dc1ProgressLabel').textContent = project.dc1Progress + '%';
 }
 
 function renderStructuralChips(){
@@ -785,8 +870,8 @@ function renderInvoices(){
         <select onchange="setInvoiceStatus(${i},this.value)" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 bg-[var(--paper)] outline-none focus:border-[var(--ink)]">
           ${invoiceStatusOptions.map(o => `<option ${o===inv.status?'selected':''}>${o}</option>`).join('')}
         </select>
-        <button onclick="editInvoiceLabel(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 hover:border-[var(--ink)]">Edit</button>
-        <button onclick="removeInvoice(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 hover:border-[var(--ink)]">Remove</button>
+        <button onclick="editInvoiceLabel(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 hover:border-[var(--ink)]"><i class="fa-solid fa-pen"></i></button>
+        <button onclick="removeInvoice(${i})" class="font-mono text-[10px] border border-[var(--line)] px-2 py-1.5 hover:border-[var(--ink)]"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>`;
   }).join('');
@@ -823,15 +908,15 @@ function addAttachment(evt){
   renderAttachments();
 }
 function renderAttachments(){
-  document.getElementById('attachHeader').textContent = '📎 PROJECT ATTACHMENTS (' + project.attachments.length + ')';
+  document.getElementById('attachHeader').innerHTML = '<i class="fa-solid fa-paperclip mr-1"></i>PROJECT ATTACHMENTS (' + project.attachments.length + ')';
   const el = document.getElementById('attachList');
   if(project.attachments.length === 0){
     el.innerHTML = '<div class="text-[var(--mute)]">No files attached.</div>';
     return;
   }
-  el.innerHTML = project.attachments.map((a,i) => `
+  el.innerHTML = project.attachments.map(a => `
     <div class="flex items-center justify-between border-b border-[var(--line)] pb-1.5">
-      <span>📄 ${a.name}</span>
+      <span><i class="fa-regular fa-file-lines mr-1"></i>${a.name}</span>
       <span class="text-[var(--mute)] text-[10px]">${a.date}</span>
     </div>
   `).join('');
@@ -845,7 +930,7 @@ function addComment(){
   renderComments();
 }
 function renderComments(){
-  document.getElementById('commentsHeader').textContent = 'MUNICIPALITY COMMENTS (' + project.comments.length + ')';
+  document.getElementById('commentsHeader').innerHTML = '<i class="fa-solid fa-comment-dots mr-1"></i>MUNICIPALITY COMMENTS (' + project.comments.length + ')';
   const el = document.getElementById('commentsList');
   if(project.comments.length === 0){
     el.innerHTML = '<div class="text-[var(--mute)]">No comments logged.</div>';
@@ -891,8 +976,9 @@ renderStages();
 renderPriorityChips();
 renderVerify();
 renderScope();
-renderDcGroups(project.dc1, project.dc1Status, 'dc1Groups', 'DC1', 'dc1');
-renderDcGroups(project.dc2, project.dc2Status, 'dc2Groups', 'DC2', 'dc2');
+renderDcGroups(project.dc1, project.dc1Status, 'dc1Groups', 'dc1');
+renderDcGroups(project.dc2, project.dc2Status, 'dc2Groups', 'dc2');
+recalcDc1Progress();
 renderStructuralChips();
 renderIfcChips();
 renderInvoices();
